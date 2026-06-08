@@ -410,7 +410,7 @@ app.use(express.urlencoded({ extended: true }));
 const storage = multer.memoryStorage();
 const upload = multer({
     storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB máximo
+    limits: { fileSize: 15 * 1024 * 1024 }, // 15 MB máximo
     fileFilter: (req, file, cb) => {
         const validExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg'];
         const ext = path.extname(file.originalname).toLowerCase();
