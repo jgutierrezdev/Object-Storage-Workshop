@@ -155,7 +155,17 @@ AWS_STORAGE_BUCKET_NAME=mi-bucket-123456789012-us-east-1
 AWS_S3_REGION_NAME=us-east-1
 ```
 
-### 4.3. Actualizar `core/settings.py`
+### 4.3. Agregar `storages` a `INSTALLED_APPS`
+
+En `core/settings.py`, modifica `THIRD_PARTY_APPS` para incluir `'storages'`:
+
+```python
+THIRD_PARTY_APPS = [
+    'storages',
+]
+```
+
+### 4.4. Actualizar `core/settings.py`
 
 Reemplaza el contenido de `settings.py` con la configuración completa que incluye las credenciales y el mapeo de almacenamiento:
 
@@ -623,4 +633,18 @@ Usuario (Navegador)
                                             └── DELETE registro en SQLite
 ```
 
-Con esto tienes una aplicación Django completamente integrada con Amazon S3, que parte de un catálogo estático con imágenes de Picsum y evoluciona hasta un **sistema completo de gestión de productos con almacenamiento en la nube**, todo sin exponer tu bucket al público y utilizando URLs prefirmadas para cada imagen.
+
+## Diferencias clave entre AWS S3, OCI Object Storage y Azure Blob Storage
+
+| Concepto | AWS S3 | OCI Object Storage | Azure Blob Storage |
+|----------|--------|-------------------|-------------------|
+| Backend Django | `S3Storage` | `S3Storage` (compatible S3) | `AzureStorage` (nativo) |
+| Paquete | `django-storages` + `boto3` | `django-storages` + `boto3` | `django-storages[azure]` |
+| Endpoint | Automático según región | `https://{namespace}.compat.objectstorage.{region}.oraclecloud.com` | Automático (`*.blob.core.windows.net`) |
+| Credenciales | IAM User (Access Key + Secret Key) o AWS Academy (con token) | Customer Secret Keys (Access Key + Secret Key) | Account Name + Account Key |
+| Session Token | Obligatorio en AWS Academy | No aplica | No aplica |
+| Tipo de URL firmada | Pre-signed URL | Pre-signed URL (compatible S3) | SAS Token (Shared Access Signature) |
+| Almacenamiento | Bucket | Bucket | Contenedor |
+| Carpeta en nube | `location: "media"` | `location: "media/"` | `azure_container: "media"` |
+
+Con esto tienes una aplicación Django completamente integrada con Azure Blob Storage, que parte de un catálogo estático con imágenes de Picsum y evoluciona hasta un **sistema completo de gestión de productos con almacenamiento en la nube de Microsoft Azure**, utilizando URLs SAS para mantener tu contenedor privado y seguro.
